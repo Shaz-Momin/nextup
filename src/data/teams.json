@@ -1,0 +1,134 @@
+[
+	{
+		"id": 1,
+		"name": "Team 1",
+		"players": [1],
+		"avgSkillLevel": 3
+	},
+	{
+		"id": 2,
+		"name": "Team 2",
+		"players": [2],
+		"avgSkillLevel": 2
+	},
+	{
+		"id": 3,
+		"name": "Team 3",
+		"players": [3, 4],
+		"avgSkillLevel": 1
+	},
+	{
+		"id": 4,
+		"name": "Team 4",
+		"players": [5],
+		"avgSkillLevel": 4
+	},
+	{
+		"id": 5,
+		"name": "Team 5",
+		"players": [6, 7, 8],
+		"avgSkillLevel": 5
+	},
+	{
+		"id": 6,
+		"name": "Team 6",
+		"players": [9, 10],
+		"avgSkillLevel": 3
+	},
+	{
+		"id": 7,
+		"name": "Team 7",
+		"players": [11, 12, 13],
+		"avgSkillLevel": 2
+	},
+	{
+		"id": 8,
+		"name": "Team 8",
+		"players": [14, 15],
+		"avgSkillLevel": 1
+	},
+	{
+		"id": 9,
+		"name": "Team 9",
+		"players": [16, 17, 18, 19, 20],
+		"avgSkillLevel": 4
+	},
+	{
+		"id": 10,
+		"name": "Team 10",
+		"players": [21],
+		"avgSkillLevel": 5
+	},
+	{
+		"id": 11,
+		"name": "Team 11",
+		"players": [22, 23, 24, 25, 26],
+		"avgSkillLevel": 3
+	},
+	{
+		"id": 12,
+		"name": "Team 12",
+		"players": [27, 28, 29, 30, 31],
+		"avgSkillLevel": 2
+	},
+	{
+		"id": 13,
+		"name": "Team 13",
+		"players": [32, 33, 34, 35, 36],
+		"avgSkillLevel": 1
+	},
+	{
+		"id": 14,
+		"name": "Team 14",
+		"players": [37, 38, 39, 40, 41, 42],
+		"avgSkillLevel": 4
+	},
+	{
+		"id": 15,
+		"name": "Team 15",
+		"players": [43, 44, 45, 46, 47],
+		"avgSkillLevel": 5
+	},
+	{
+		"id": 16,
+		"name": "Team 16",
+		"players": [48, 49, 50, 51],
+		"avgSkillLevel": 3
+	},
+	{
+		"id": 17,
+		"name": "Team 17",
+		"players": [52],
+		"avgSkillLevel": 2
+	},
+	{
+		"id": 18,
+		"name": "Team 18",
+		"players": [53, 54],
+		"avgSkillLevel": 1
+	},
+	{
+		"id": 19,
+		"name": "Team 19",
+		"players": [55, 56],
+		"avgSkillLevel": 4
+	},
+	{
+		"id": 20,
+		"name": "Team 20",
+		"players": [57],
+		"avgSkillLevel": 5
+	},
+	{
+		"id": 21,
+		"name": "Team 21",
+		"players": [58],
+		"avgSkillLevel": 3
+	},
+	{
+		"id": 22,
+		"name": "Team 22",
+		"players": [59],
+		"avgSkillLevel": 2
+	}
+]

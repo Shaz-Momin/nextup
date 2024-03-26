@@ -1,0 +1,30 @@
+[
+	{
+		"name": "1v1 Basketball",
+		"courts": [1]
+	},
+	{
+		"name": "2v2 Basketball",
+		"courts": [2]
+	},
+	{
+		"name": "3v3 Basketball",
+		"courts": [3]
+	},
+	{
+		"name": "4v4 Basketball",
+		"courts": [4]
+	},
+	{
+		"name": "5v5 Basketball",
+		"courts": [5, 6]
+	},
+	{
+		"name": "Volleyball",
+		"courts": [7, 8]
+	},
+	{
+		"name": "2v2 Badminton",
+		"courts": [9, 10, 11]
+	}
+]
