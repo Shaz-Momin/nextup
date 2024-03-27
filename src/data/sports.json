@@ -1,30 +1,44 @@
 [
 	{
+		"id": 1,
 		"name": "1v1 Basketball",
-		"courts": [1]
+		"courts": [1],
+		"freeAgents": [44]
 	},
 	{
+		"id": 2,
 		"name": "2v2 Basketball",
-		"courts": [2]
+		"courts": [2],
+		"freeAgents": []
 	},
 	{
+		"id": 3,
 		"name": "3v3 Basketball",
-		"courts": [3]
+		"courts": [3],
+		"freeAgents": []
 	},
 	{
+		"id": 4,
 		"name": "4v4 Basketball",
-		"courts": [4]
+		"courts": [4],
+		"freeAgents": []
 	},
 	{
+		"id": 5,
 		"name": "5v5 Basketball",
-		"courts": [5, 6]
+		"courts": [5, 6],
+		"freeAgents": [45, 46, 47]
 	},
 	{
+		"id": 6,
 		"name": "Volleyball",
-		"courts": [7, 8]
+		"courts": [7, 8],
+		"freeAgents": [50, 51]
 	},
 	{
+		"id": 7,
 		"name": "2v2 Badminton",
-		"courts": [9, 10, 11]
+		"courts": [9, 10, 11],
+		"freeAgents": []
 	}
 ]
