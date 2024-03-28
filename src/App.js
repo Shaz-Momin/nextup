@@ -43,6 +43,10 @@ function App() {
 							<SportPage
 								sport={selectedSport}
 								onBack={() => setSelectedSport(null)}
+								createTeam={() => {
+									setCurrentTab(1);
+									setSelectedSport(null);
+								}}
 							/>
 						)}
 					</div>

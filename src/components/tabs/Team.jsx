@@ -4,7 +4,7 @@ import teams from '../../data/teams.json'
 
 const Team = () => {
 
-  const [createTeam, setCreateTeam] = useState(true)
+  const [createTeam, setCreateTeam] = useState(true) // change this to see your teams vs create teams
 
   const currTeam = () => {
     let team = []

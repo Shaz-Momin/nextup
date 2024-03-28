@@ -5,7 +5,7 @@ import sports from '../data/sports.json';
 import teams from '../data/teams.json';
 import CourtPage from './CourtPage'
 
-const SportPage = ({ sport, onBack }) => {
+const SportPage = ({ sport, onBack, createTeam }) => {
 
     const calculateAverageSkill = (courtId) => {
         const court = courts.find(court => court.id === courtId);
@@ -33,7 +33,7 @@ const SportPage = ({ sport, onBack }) => {
             </header>
             <div className='mx-4 flex flex-col items-center'>
                 {sportCourts?.map((court, index) => (
-                <div key={index} className='w-full lg:w-2/4 p-2 rounded border-slate-900 border mb-4 hover:text-white hover:bg-slate-800' onClick={setSelectedCourt(court)}>
+                <div key={index} className='w-full lg:w-2/4 p-2 rounded border-slate-900 border mb-4 hover:text-white hover:bg-slate-800' onClick={() => setSelectedCourt(court)}>
                     <div className="text-xl">Court {court.id}</div>
                     <div className="flex flex-row justify-between">
                     <div className="text-md">Average Skill: {calculateAverageSkill(court.id)}</div>
@@ -45,11 +45,12 @@ const SportPage = ({ sport, onBack }) => {
             </>
             ) : 
             (
-                // <h1>test</h1>
                 <>
-                console.log(selectedCourt)
             <CourtPage 
-                selectedCourt={selectedCourt}/>
+                court={selectedCourt}
+                sport={sport}
+                onBack={() => setSelectedCourt(null)}
+                createTeam={createTeam}/>
                 </>
                 )
             }
