@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import courts from '../data/courts.json';
 import teams from '../data/teams.json';
 import TeamPage from './TeamPage';
 

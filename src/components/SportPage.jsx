@@ -1,11 +1,40 @@
-import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import courts from '../data/courts.json';
-import sports from '../data/sports.json';
-import teams from '../data/teams.json';
+import React, { useState, useEffect } from 'react';
+import { get, getDatabase,ref, onValue } from "firebase/database";
 import CourtPage from './CourtPage'
 
 const SportPage = ({ sport, onBack, createTeam }) => {
+
+    const [courts, setCourts] = useState();
+    const [teams, setTeams] = useState();
+
+    const db = getDatabase();
+
+    const courtsRef = ref(db, 'courts');
+    useEffect(() => {
+        get(courtsRef).then((response) => {
+            setCourts(response.val());
+        })
+        onValue(courtsRef, (response) => {
+            setCourts(response.val());
+        })
+    }, [])
+
+    const teamsRef = ref(db, 'teams');
+    useEffect(() => {
+        get(teamsRef).then((response) => {
+            setTeams(response.val());
+        })
+        onValue(teamsRef, (response) => {
+            setTeams(response.val());
+        })
+    }, [])
+
+    useEffect(() => {
+        if (courts) {
+            setSportCourts(sport?.courts.map(courtId => courts.find(court => court.id === courtId)));
+        }
+    }, [courts])
+
 
     const calculateAverageSkill = (courtId) => {
         const court = courts.find(court => court.id === courtId);
@@ -20,7 +49,7 @@ const SportPage = ({ sport, onBack, createTeam }) => {
         return teamSkillLevels.length > 0 ? (totalSkill / teamSkillLevels.length).toFixed(1) : 0; // Calculate average skill level
     }; 
 
-    const sportCourts = sport?.courts.map(courtId => courts.find(court => court.id === courtId));
+    const [sportCourts, setSportCourts] = useState();
     const [selectedCourt, setSelectedCourt] = useState(null);
 
     return (
@@ -32,7 +61,7 @@ const SportPage = ({ sport, onBack, createTeam }) => {
                 <div className="text-4xl font-bold">{sport.name} Courts</div>
             </header>
             <div className='mx-4 flex flex-col items-center'>
-                {sportCourts?.map((court, index) => (
+                {courts && teams && sportCourts && sportCourts?.map((court, index) => (
                 <div key={index} className='w-full lg:w-2/4 p-2 rounded border-slate-900 border mb-4 hover:text-white hover:bg-slate-800' onClick={() => setSelectedCourt(court)}>
                     <div className="text-xl">Court {court.id}</div>
                     <div className="flex flex-row justify-between">

@@ -1,6 +1,5 @@
 import React from 'react';
 import players from '../data/players.json';
-import teams from '../data/teams.json';
 
 const TeamPage = ({ team, onBack, sport, createTeam }) => {
 

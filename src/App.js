@@ -1,17 +1,21 @@
 import "./App.css";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
 import Home from "./components/tabs/Home";
 import Team from "./components/tabs/Team";
 import Profile from "./components/tabs/Profile";
 import Login from "./components/tabs/Login";
 import CreateTeam from "./components/CreateTeam";
-import { Routes, Route } from "react-router-dom";
 import SportPage from "./components/SportPage";
+import { initializeApp } from "firebase/app";
+import { firebaseConfig } from "./Firebase";
 
 // const tabs = ["home", "team", "profile"];
 
 function App() {
+
+	const app = initializeApp(firebaseConfig);
+
 	let [currentTab, setCurrentTab] = useState(0);
 	let [loggedIn, setLoggedIn] = useState(false);
 	let [selectedSport, setSelectedSport] = useState(null);
