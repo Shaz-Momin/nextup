@@ -16,26 +16,35 @@ const Profile = () => {
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '500px', margin: '0 auto' }}>
-      <div style={{ textAlign: 'right' }}>
+    <div className="w-full m-8">
+      <div className="float-right">
         <button style={{ fontSize: '24px', cursor: 'pointer', border: 'none', background: 'none' }}>
           <FaCog />
         </button>
       </div>
-      <div style={{ textAlign: 'center' }}>
+      <div className="flex">
         <img src={user.profilePhoto} alt="profile" style={{ width: '150px', borderRadius: '50%' }} />
-        <h1>{user.name}</h1>
-        <p>Phone: {user.phone}</p>
+        <div className="flex flex-col items-left justify-center pl-5">
+          <h1 className="text-3xl font-semibold">{user.name}</h1>
+          <p className="italic text-md">Phone: {user.phone}</p>
+        </div>
       </div>
-      <div>
-        <h2>Sports Information:</h2>
-        {Object.entries(user.sportsInfo).map(([sport, { position, skillLevel }]) => (
-          <div key={sport}>
-            <h3>{sport}</h3>
-            <p>Position: {position}</p>
-            <p>Skill Level: {renderStars(skillLevel)}</p>
-          </div>
-        ))}
+      <div className="w-full my-6">
+        <h2 className="text-center font-semibold uppercase tracking-wide text-xl text-custom-red">Sports Information</h2>
+        <div className="py-4">
+          {Object.entries(user.sportsInfo).map(([sport, { position, skillLevel }]) => (
+            <div key={sport} className="mb-4 bg-custom-green px-6 py-4 rounded-lg">
+              <h3 className="font-semibold italic text-xl mb-1">{sport}</h3>
+              <p className="flex justify-between text-lg">
+                <span>Position:</span>
+                <span className="italic">{position}</span>
+              </p>
+              <p className="flex justify-between text-lg">
+                <span>Skill Level:</span>
+                <span className="text-xl tracking-wider">{renderStars(skillLevel)}</span></p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
