@@ -1,11 +1,30 @@
-import React, {useState} from 'react';
-import courts from '../data/courts.json';
-import teams from '../data/teams.json';
+import React, { useState, useEffect } from 'react';
+import { get, getDatabase,ref, onValue } from "firebase/database";
 import TeamPage from './TeamPage';
 
 const CourtPage = ({ court, onBack, sport, createTeam }) => {
 
-    const courtTeams = court?.waitlist.map(teamId => teams.find(team => team.id === teamId));
+    const [teams, setTeams] = useState();
+    const db = getDatabase();
+
+    const teamsRef = ref(db, 'teams');
+    useEffect(() => {
+        get(teamsRef).then((response) => {
+            setTeams(response.val());
+        })
+        onValue(teamsRef, (response) => {
+            setTeams(response.val());
+        })
+    }, [])
+
+    const [courtTeams, setCourtTeams] = useState();
+
+    useEffect(() => {
+        if (teams) {
+            setCourtTeams(court?.waitlist.map(teamId => teams.find(team => team.id === teamId)));
+        }
+    }, [teams])
+
     const [selectedTeam, setSelectedTeam] = useState(null);
 
     return (
@@ -18,7 +37,7 @@ const CourtPage = ({ court, onBack, sport, createTeam }) => {
                     <div className="text-4xl font-bold">Court {court.id} Waitlist</div>
                 </header>
                 <div className='mx-4 flex flex-col items-center'>
-                    {courtTeams?.map((team, index) => (
+                    {teams && courtTeams?.map((team, index) => (
                     <div key={index} className='w-full lg:w-2/4 p-2 rounded border-slate-900 border mb-4 hover:text-white hover:bg-slate-800' onClick={() => setSelectedTeam(team)}>
                         <div className="text-xl">{team.name}</div>
                         <div className="flex flex-row justify-between">
