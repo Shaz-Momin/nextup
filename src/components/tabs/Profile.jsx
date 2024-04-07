@@ -1,9 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { get, getDatabase,ref, onValue } from "firebase/database";
 import { FaCog } from 'react-icons/fa';
-import players from '../../data/players.json';
 
 const Profile = () => {
-  const user = players.find(u => u.id === 1);
+
+  const [players, setPlayers] = useState();
+  const db = getDatabase();
+
+  const playersRef = ref(db, 'players');
+    useEffect(() => {
+        get(playersRef).then((response) => {
+            setPlayers(response.val());
+        })
+        onValue(playersRef, (response) => {
+            setPlayers(response.val());
+        })
+    }, [])
+
+  const [user, setUser] = useState();
+  useEffect(() => {
+    if (players) {
+      setUser(players.find(u => u.id === 1))
+    }
+  }, [players])
 
   const renderStars = (level) => {
     let stars = [];
@@ -22,6 +41,7 @@ const Profile = () => {
           <FaCog />
         </button>
       </div>
+      {players && user && <>
       <div style={{ textAlign: 'center' }}>
         <img src={user.profilePhoto} alt="profile" style={{ width: '150px', borderRadius: '50%' }} />
         <h1>{user.name}</h1>
@@ -37,6 +57,7 @@ const Profile = () => {
           </div>
         ))}
       </div>
+      </>}
     </div>
   );
 };

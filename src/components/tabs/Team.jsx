@@ -1,8 +1,23 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react';
+import { get, getDatabase, ref, onValue } from "firebase/database";
 import CreateTeam from '../CreateTeam'
-import teams from '../../data/teams.json'
 
 const Team = () => {
+
+  const [teams, setTeams] = useState()
+  const db = getDatabase()
+
+  const teamsRef = ref(db, 'teams');
+    useEffect(() => {
+        get(teamsRef).then((response) => {
+            setTeams(response.val());
+        })
+        onValue(teamsRef, (response) => {
+            setTeams(response.val());
+        })
+    }, [])
+
+
 
   const [createTeam, setCreateTeam] = useState(true) // change this to see your teams vs create teams
 
@@ -20,7 +35,7 @@ const Team = () => {
 
   return (
     <div className='w-full'>
-      { createTeam ? <CreateTeam sportId={1} setCreateTeam={setCreateTeam} /> :
+      {teams && (createTeam ? <CreateTeam sportId={1} setCreateTeam={setCreateTeam} /> :
       <>
         <header className="flex justify-center items-center h-32">
           <div className="text-4xl font-bold">Team</div>
@@ -35,7 +50,7 @@ const Team = () => {
         </div>
       </>
       
-      }
+      )}
     </div>
   )
 }

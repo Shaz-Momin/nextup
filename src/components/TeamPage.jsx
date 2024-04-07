@@ -1,9 +1,29 @@
-import React from 'react';
-import players from '../data/players.json';
+import React, { useState, useEffect } from 'react';
+import { get, getDatabase,ref, onValue } from "firebase/database";
 
 const TeamPage = ({ team, onBack, sport, createTeam }) => {
 
-    const teamPlayers = team?.players.map(playerId => players.find(player => player.id === playerId));
+    const [players, setPlayers] = useState();
+    const db = getDatabase();
+
+    const playersRef = ref(db, 'players');
+    useEffect(() => {
+        get(playersRef).then((response) => {
+            setPlayers(response.val());
+        })
+        onValue(playersRef, (response) => {
+            setPlayers(response.val());
+        })
+    }, [])
+
+    const [teamPlayers, setTeamPlayers] = useState();
+
+    useEffect(() => {
+        if (players) {
+            setTeamPlayers(team?.players.map(playerId => players.find(player => player.id === playerId)));
+        }
+    }, [players])
+
 
     return (
         <div className='w-full'>
@@ -12,7 +32,7 @@ const TeamPage = ({ team, onBack, sport, createTeam }) => {
                 <div className="text-4xl font-bold">Team {team.name}</div>
             </header>
             <div className='mx-4 flex flex-col items-center'>
-                {teamPlayers?.map((player, index) => (
+                {players && teamPlayers?.map((player, index) => (
                 <div key={index} className='w-full lg:w-2/4 p-2 rounded border-slate-900 border mb-4 hover:text-white hover:bg-slate-800'>
                     <div className="text-xl">{player.name}</div>
                     <div className="flex flex-row justify-between">

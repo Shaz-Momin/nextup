@@ -1,28 +1,61 @@
-import React, { useState } from 'react'
-import sports from '../data/sports.json'
-import courts from '../data/courts.json'
-import players from '../data/players.json'
+import React, { useState, useEffect } from 'react'
+import { getDatabase, get, ref, onValue } from 'firebase/database'
 
 const CreateTeam = (sportId, setCreateTeam) => {
-  const sport = sports.find(s => s.id === sportId);
+
+  const [sports, setSports] = useState()
+  const [players, setPlayers] = useState()
+  const db = getDatabase()
+
+  const playersRef = ref(db, 'players');
+  useEffect(() => {
+      get(playersRef).then((response) => {
+          setPlayers(response.val());
+      })
+      onValue(playersRef, (response) => {
+          setPlayers(response.val());
+      })
+  }, [])
+
+  const sportsRef = ref(db, 'sports');
+  useEffect(() => {
+    get(sportsRef).then((response) => {
+      setSports(response.val());
+    })
+    onValue(sportsRef, (response) => {
+      setSports(response.val());
+    })
+  }, [])
+
+
+
+  const [sport, setSport] = useState()
+  useEffect(() => {
+    if (sports) {
+      setSport(sports.find(s => s.id === sportId));
+    }
+  }, [sports])
+
   let [teamSaved, setTeamSaved] = useState(false)
   let [currentPlayers, setCurrentPlayers] = useState([])
   let [sportCategory, setSportCategory] = useState("")
   let [teamInfo, setTeamInfo] = useState({name: '', sport: '', avgSkillLevel: 0})
 
-  const countTeams = (courtIds) => {
-    let count = 0
+  // const countTeams = (courtIds) => {
+  //   let count = 0
     
-    for (let i = 0; i < courtIds.length; i++) {
-      const court = courts.find(c => c.id === courtIds[i]);
+  //   for (let i = 0; i < courtIds.length; i++) {
+  //     if (courts) {
+  //       const court = courts.find(c => c.id === courtIds[i]);
+  //     }
 
-      if (court) {
-        count += court.waitlist.length
-      }
-    }
+  //     if (court) {
+  //       count += court.waitlist.length
+  //     }
+  //   }
 
-    return count
-  }
+  //   return count
+  // }
 
   const createTeam = (e) => {
     e.preventDefault()
@@ -41,8 +74,10 @@ const CreateTeam = (sportId, setCreateTeam) => {
 
   const addPlayer = (playerUsername) => {
     if (playerUsername === '') return
-
-    const player = players.find(p => p.name === playerUsername)
+    let player;
+    if (players) {
+      player = players.find(p => p.name === playerUsername)
+    }
     if (player) {
       if (currentPlayers.includes(player.id)) {
         alert('Player already in team')
@@ -74,7 +109,7 @@ const CreateTeam = (sportId, setCreateTeam) => {
               <div className='flex flex-row p-2'>
                 <label for="sportSelection" className='font-semibold mr-2'>Select sport:</label><br />
                 <select id="sportSelection" name="sportSelection" required>
-                  {sports.map((sport, index) => (
+                  {sports && sports.map((sport, index) => (
                     <option key={index} value={sport.id}>{sport.name}</option>
                   ))}
                 </select>
@@ -93,7 +128,7 @@ const CreateTeam = (sportId, setCreateTeam) => {
             <button className="p-2 bg-slate-300 text-slate-800 rounded border border-slate-800 my-4" onClick={() => addPlayer(document.getElementById('playerUsername').value)}>Add Player</button>
             <div className='w-full flex flex-col'>
               <div className='text-xl my-4 underline text-center'>Players on the team</div>
-              {currentPlayers.map((playerId, index) => {
+              {players && currentPlayers.map((playerId, index) => {
                 const player = players.find(p => p.id === playerId)
                 return (
                   <div key={index} className='w-full lg:w-2/4 p-2 rounded border-slate-900 border mb-4 hover:text-white hover:bg-slate-800'>
