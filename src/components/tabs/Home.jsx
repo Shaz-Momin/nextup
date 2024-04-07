@@ -43,14 +43,14 @@ const Home = ({ onSelectSport }) => {
 
   return (
     <div className='w-full'>
-      <header className="flex justify-center items-center h-32">
+      <header className="flex justify-center items-center h-32 sticky top-0 w-full bg-white">
 				<div className="text-4xl font-bold">Home</div>
 			</header>
-      <div className='mx-4 flex flex-col items-center'>
+      <div className='mx-4 flex flex-col items-center mb-32'>
         {sports && courts && sports.map((sport, index) => (
-          <div key={index} className='w-full lg:w-2/4 p-2 rounded border-slate-900 border mb-4 hover:text-white hover:bg-slate-800' onClick={() => onSelectSport(sport)}>
-            <div className="text-xl">{sport.name}</div>
-            <div className="flex flex-row justify-between">
+          <div key={index} className='w-full lg:w-2/4 p-4 flex flex-col justify-between rounded mb-4 bg-custom-red hover:bg-red-600' onClick={() => onSelectSport(sport)}>
+            <div className="text-2xl text-white font-semibold tracking-wide mb-2">{sport.name}</div>
+            <div className="flex flex-row justify-between text-lg italic">
               <div className="text-md">Courts: {sport.courts.length}</div>
               {sport?.courts && <div className="text-md">Teams Waiting: {countTeams(sport?.courts)}</div>}
             </div>

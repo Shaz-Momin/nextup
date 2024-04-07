@@ -44,15 +44,15 @@ const TeamPage = ({ team, onBack, sport, createTeam }) => {
             </header>
             <div className='mx-4 flex flex-col items-center'>
                 {players && teamPlayers?.map((player, index) => (
-                <div key={index} className='w-full lg:w-2/4 p-2 rounded border-slate-900 border mb-4 hover:text-white hover:bg-slate-800'>
-                    <div className="text-xl">{player.name}</div>
-                    <div className="flex flex-row justify-between">
-                    <div className="text-md">Skill: {player.sportsInfo[sport.type].skillLevel}</div>
-                    <div className="text-md">Phone Number: {player.phone}</div>
+                <div key={index} className='w-full lg:w-2/4 p-4 rounded mb-4 bg-custom-yellow hover:bg-yellow-600'>
+                    <div className="text-2xl font-semibold mb-1 tracking-wide">{player.name}</div>
+                    <div className="flex flex-row justify-between italic text-lg">
+                        <div className="">Skill: {player.sportsInfo[sport.type].skillLevel}</div>
+                        <div className="">Phone Number: {player.phone}</div>
                     </div>
                 </div>
                 ))}
-                <div className='w-full lg:w-2/4 p-2 rounded border-slate-900 border mb-4 hover:text-white hover:bg-slate-800'>
+                <div className='w-full lg:w-2/4 p-2 rounded border-custom-yellow border-4 mb-4 hover:text-white hover:bg-slate-800'>
                     <div className="text-xl" onClick={() => {
                         if (sport.maxPlayers - team.players.length > 0) {
                             // Fix later, 60 is temporary personal id, needs to be real user's id

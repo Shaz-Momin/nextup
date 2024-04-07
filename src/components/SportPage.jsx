@@ -62,11 +62,11 @@ const SportPage = ({ sport, onBack, createTeam }) => {
             </header>
             <div className='mx-4 flex flex-col items-center'>
                 {courts && teams && sportCourts && sportCourts?.map((court, index) => (
-                <div key={index} className='w-full lg:w-2/4 p-2 rounded border-slate-900 border mb-4 hover:text-white hover:bg-slate-800' onClick={() => setSelectedCourt(court)}>
-                    <div className="text-xl">Court {court.id}</div>
-                    <div className="flex flex-row justify-between">
-                    <div className="text-md">Average Skill: {calculateAverageSkill(court.id)}</div>
-                    {sport?.courts && <div className="text-md">Teams Waiting: {court.waitlist.length}</div>}
+                <div key={index} className='w-full lg:w-2/4 p-4 rounded mb-4 bg-custom-yellow' onClick={() => setSelectedCourt(court)}>
+                    <div className="text-2xl font-semibold tracking-wide">Court {court.id}</div>
+                    <div className="flex flex-row justify-between text-lg italic">
+                        <div className="">Average Skill: {calculateAverageSkill(court.id)}</div>
+                        {sport?.courts && <div className="text-md">Teams Waiting: {court.waitlist.length}</div>}
                     </div>
                 </div>
                 ))}
