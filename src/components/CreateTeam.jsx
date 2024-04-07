@@ -5,6 +5,7 @@ const CreateTeam = (sportId, setCreateTeam) => {
 
   const [sports, setSports] = useState()
   const [players, setPlayers] = useState()
+  const [teams, setTeams] = useState()
   const db = getDatabase()
 
   const playersRef = ref(db, 'players');
@@ -40,6 +41,34 @@ const CreateTeam = (sportId, setCreateTeam) => {
   let [currentPlayers, setCurrentPlayers] = useState([])
   let [sportCategory, setSportCategory] = useState("")
   let [teamInfo, setTeamInfo] = useState({name: '', sport: '', avgSkillLevel: 0})
+
+
+  const teamsRef = ref(db, 'teams');
+  useEffect(() => {
+    get(teamsRef).then((response) => {
+      setTeams(response.val());
+    })
+    onValue(teamsRef, (response) => {
+      setTeams(response.val());
+    })
+  }, [])
+
+  useEffect(() => {
+    if (teams) {
+      for (const teamId in teams) {
+        const team = teams[teamId]
+        if (team.players.includes(60)) {
+          setTeamSaved(true)
+          const teamRef = ref(db, 'teams/' + (team.id - 1))
+          get(teamRef).then((response) => {
+            setTeamInfo(response.val())
+            // console.log(response.val().players)
+            // setCurrentPlayers(response.val().players)
+          })
+        }
+      }
+    }
+  }, [teams])
 
   // const countTeams = (courtIds) => {
   //   let count = 0
@@ -130,15 +159,17 @@ const CreateTeam = (sportId, setCreateTeam) => {
               <div className='text-xl my-4 underline text-center'>Players on the team</div>
               {players && currentPlayers.map((playerId, index) => {
                 const player = players.find(p => p.id === playerId)
-                return (
-                  <div key={index} className='w-full lg:w-2/4 p-2 rounded border-slate-900 border mb-4 hover:text-white hover:bg-slate-800'>
-                    <div className="text-xl">{player.name}</div>
-                    <div className="flex flex-row justify-between">
-                    <div className="text-sm">Skill: {player.sportsInfo[sportCategory].skillLevel}</div>
-                    <div className="text-sm">Phone Number: {player.phone}</div>
-                  </div>
-              </div>
-                )
+                if (player) {
+                  return (
+                    <div key={index} className='w-full lg:w-2/4 p-2 rounded border-slate-900 border mb-4 hover:text-white hover:bg-slate-800'>
+                      <div className="text-xl">{player.name}</div>
+                      <div className="flex flex-row justify-between">
+                      <div className="text-sm">Skill: {player.sportsInfo[sportCategory].skillLevel}</div>
+                      <div className="text-sm">Phone Number: {player.phone}</div>
+                    </div>
+                </div>
+                  )
+                }
               })}
             </div>
           </>

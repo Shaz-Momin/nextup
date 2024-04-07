@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { get, getDatabase,ref, onValue } from "firebase/database";
+import { get, getDatabase,ref, onValue, set } from "firebase/database";
 
 const TeamPage = ({ team, onBack, sport, createTeam }) => {
 
@@ -15,6 +15,17 @@ const TeamPage = ({ team, onBack, sport, createTeam }) => {
             setPlayers(response.val());
         })
     }, [])
+
+
+    function joinTeam(team, playerId) {
+       const teamPlayersRef = ref(db, 'teams/' + (team.id - 1) + '/' + "players")
+        get(teamPlayersRef).then((response) => {
+            const teamPlayers = response.val();
+            teamPlayers.push(playerId)
+            set(teamPlayersRef, teamPlayers);
+        })
+      }
+      
 
     const [teamPlayers, setTeamPlayers] = useState();
 
@@ -44,6 +55,8 @@ const TeamPage = ({ team, onBack, sport, createTeam }) => {
                 <div className='w-full lg:w-2/4 p-2 rounded border-slate-900 border mb-4 hover:text-white hover:bg-slate-800'>
                     <div className="text-xl" onClick={() => {
                         if (sport.maxPlayers - team.players.length > 0) {
+                            // Fix later, 60 is temporary personal id, needs to be real user's id
+                            joinTeam(team, 60)
                             createTeam()
                             alert("add team to backend")
                         } else {
