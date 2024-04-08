@@ -4,6 +4,7 @@ import { get, getDatabase,ref, onValue, set } from "firebase/database";
 const TeamPage = ({ team, onBack, sport, createTeam }) => {
 
     const [players, setPlayers] = useState();
+    const [teams, setTeams] = useState()
     const db = getDatabase();
 
     const playersRef = ref(db, 'players');
@@ -16,16 +17,38 @@ const TeamPage = ({ team, onBack, sport, createTeam }) => {
         })
     }, [])
 
+    const teamsRef = ref(db, 'teams');
+    useEffect(() => {
+        get(teamsRef).then((response) => {
+            setTeams(response.val());
+        })
+        onValue(teamsRef, (response) => {
+            setTeams(response.val());
+        })
+    }, [])
+
 
     function joinTeam(team, playerId) {
-       const teamPlayersRef = ref(db, 'teams/' + (team.id - 1) + '/' + "players")
-        get(teamPlayersRef).then((response) => {
-            const teamPlayers = response.val();
-            teamPlayers.push(playerId)
-            set(teamPlayersRef, teamPlayers);
-        })
+        let onTeam = false;
+        if (teams) {
+            for (const teamId in teams) {
+            const team = teams[teamId]
+            if (team.players.includes(60)) {
+                onTeam = true;
+            }
+        }
+        if (onTeam) {
+            alert("You cannot join multiple teams!")
+        } else {
+            const teamPlayersRef = ref(db, 'teams/' + (team.id - 1) + '/' + "players")
+             get(teamPlayersRef).then((response) => {
+                 const teamPlayers = response.val();
+                 teamPlayers.push(playerId)
+                 set(teamPlayersRef, teamPlayers);
+             })
+        }
       }
-      
+    }
 
     const [teamPlayers, setTeamPlayers] = useState();
 
@@ -58,7 +81,6 @@ const TeamPage = ({ team, onBack, sport, createTeam }) => {
                             // Fix later, 60 is temporary personal id, needs to be real user's id
                             joinTeam(team, 60)
                             createTeam()
-                            alert("add team to backend")
                         } else {
                             alert("Team full, cannot join!")
                         }
