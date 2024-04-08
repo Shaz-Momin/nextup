@@ -20,7 +20,7 @@ const Profile = () => {
   const [user, setUser] = useState();
   useEffect(() => {
     if (players) {
-      setUser(players.find(u => u.id === 1))
+      setUser(players.find(u => u.id === 60))
     }
   }, [players])
 

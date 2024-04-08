@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { getDatabase, get, ref, onValue, set } from 'firebase/database'
+import { getDatabase, get, ref, onValue, set, push } from 'firebase/database'
 
 const CreateTeam = (sportId, setCreateTeam) => {
 
@@ -40,20 +40,12 @@ const CreateTeam = (sportId, setCreateTeam) => {
     })
   }, [])
 
-
-
-  const [sport, setSport] = useState()
-  useEffect(() => {
-    if (sports) {
-      setSport(sports.find(s => s.id === sportId));
-    }
-  }, [sports])
-
   const [teamSaved, setTeamSaved] = useState(false)
   const [currentPlayers, setCurrentPlayers] = useState([])
   const [sportCategory, setSportCategory] = useState("")
   const [sportMax, setSportMax] = useState()
-  const [teamInfo, setTeamInfo] = useState({name: '', sport: '', avgSkillLevel: 0})
+  const [teamInfo, setTeamInfo] = useState({name: '', avgSkillLevel: 0})
+  const [teamSport, setTeamSport] = useState("")
 
 
   const teamsRef = ref(db, 'teams');
@@ -92,22 +84,6 @@ const CreateTeam = (sportId, setCreateTeam) => {
     }
   }, [teams])
 
-  // const countTeams = (courtIds) => {
-  //   let count = 0
-    
-  //   for (let i = 0; i < courtIds.length; i++) {
-  //     if (courts) {
-  //       const court = courts.find(c => c.id === courtIds[i]);
-  //     }
-
-  //     if (court) {
-  //       count += court.waitlist.length
-  //     }
-  //   }
-
-  //   return count
-  // }
-
   const createTeam = (e) => {
     e.preventDefault()
     const teamName = document.getElementById('teamName').value
@@ -117,12 +93,60 @@ const CreateTeam = (sportId, setCreateTeam) => {
 
     setTeamSaved(true)
 
-    setTeamInfo({name: teamName, sport: sports[sport - 1].name, avgSkillLevel: 3})
     setSportCategory(sports[sport - 1].type)
     setSportMax(sports[sport - 1].maxPlayers)
-    setCurrentPlayers([1])
-
+    setCurrentPlayers([60])
+    setTeamSport(sports[sport - 1].name)
+    setTeamInfo({name: teamName, avgSkillLevel: 3, players: currentPlayers})
   }
+
+  useEffect(() => {
+    setTeamInfo({
+      name: teamInfo.name,
+      avgSkillLevel: teamInfo.avgSkillLevel,
+      players: currentPlayers,
+      id: teamInfo.id
+    })
+  }, [currentPlayers])
+
+  useEffect(() => {
+    if(!teamInfo.id) {
+      teamInfo.id = teams?.length + 1
+    }
+    if (teamInfo.players?.length > 0) {
+      const thisTeamRef = ref(db, 'teams/' + (teamInfo.id - 1))
+      set(thisTeamRef, teamInfo);
+    }
+    let onCourt = false;
+    for (const sportId in sports) {
+      const currSport = sports[sportId]
+      for (const courtId in currSport.courts) {
+        const currCourt = courts[currSport.courts[courtId] - 1]
+        if (currCourt.waitlist.includes(teamInfo.id)) {
+          onCourt = true;
+        }
+      }
+    }
+    if (!onCourt) {
+      for (const sportId in sports) {
+        const currSport = sports[sportId]
+        if (currSport.name == teamSport) {
+          let minWaitlist = 1000000
+          let minIndex = -1
+          for (const courtId in currSport.courts) {
+            const currCourt = courts[currSport.courts[courtId] - 1]
+            if (currCourt.waitlist.length < minWaitlist) {
+              minWaitlist = currCourt.waitlist.length
+              minIndex = currCourt.id - 1
+            } 
+          }
+          courts[minIndex].waitlist.push(teamInfo.id)
+          set(courtsRef, courts)
+        }
+      }
+    }
+    //show user what court they are on
+  }, [teamInfo])
 
   const addPlayer = (playerUsername) => {
     if (playerUsername === '') return
@@ -156,12 +180,32 @@ const CreateTeam = (sportId, setCreateTeam) => {
             newTeam.push(player)
           }
         })
-        set(teamPlayersRef, newTeam);
-        setTeamInfo({name: '', sport: '', avgSkillLevel: 0})
-        setCurrentPlayers([])
+        if (newTeam.length === 0) {
+          const deleteTeamRef = ref(db, 'teams/' + (teamInfo.id - 1))
+          set(deleteTeamRef, {})
+          for (const sportId in sports) {
+            const currSport = sports[sportId]
+            for (const courtId in currSport.courts) {
+              const currCourt = courts[currSport.courts[courtId] - 1]
+              if (currCourt.waitlist.includes(teamInfo.id)) {
+                const deleteCourtRef = ref(db, 'courts/' + (currCourt.id - 1) + '/waitlist')
+                get(deleteCourtRef).then((response) => {
+                  const newWaitlist = response.val()
+                  newWaitlist.pop()
+                  courts[currCourt.id - 1].waitlist = newWaitlist
+                  set(deleteCourtRef, newWaitlist)
+                })
+              }
+            }
+          }
+        } else {
+          set(teamPlayersRef, newTeam);
+        }
         setSportCategory()
         setSportMax()
         setTeamSaved(false)
+        setCurrentPlayers([])
+        setTeamInfo({name: '', avgSkillLevel: 0})
     })
   }
 
@@ -169,7 +213,7 @@ const CreateTeam = (sportId, setCreateTeam) => {
     <div>
       <header className="flex flex-col justify-center items-center h-32 sticky top-0 w-full bg-white">
         <div className="text-4xl font-bold">{teamSaved ? teamInfo.name : "Create Your Team"}</div>
-        {teamSaved && <div className="text-lg italic">{teamInfo.sport}</div>}
+        {teamSaved && <div className="text-lg italic">{teamSport}</div>}
       </header>
       <div className="mb-32">
         <div className='mx-4 flex flex-col justify-center items-center text-xl'>
@@ -216,7 +260,7 @@ const CreateTeam = (sportId, setCreateTeam) => {
                     <div key={index} className='w-full lg:w-2/4 p-4 flex flex-col justify-between rounded mb-4 bg-custom-gray'>
                       <div className="text-2xl text-white font-semibold tracking-wide mb-2">{player.name}</div>
                       <div className="flex flex-row justify-between text-lg italic">
-                        <div className="">Skill: {player.sportsInfo[sportCategory].skillLevel}</div>
+                        <div className="">Skill: {player.sportsInfo[sportCategory]?.skillLevel}</div>
                         <div className="">Phone: {player.phone}</div>
                       </div>
                   </div>
