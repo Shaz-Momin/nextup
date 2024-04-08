@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { getDatabase, get, ref, onValue } from 'firebase/database'
+import { getDatabase, get, ref, onValue, set } from 'firebase/database'
 
 const CreateTeam = (sportId, setCreateTeam) => {
 
   const [sports, setSports] = useState()
   const [players, setPlayers] = useState()
   const [teams, setTeams] = useState()
+  const [courts, setCourts] = useState()
   const db = getDatabase()
 
   const playersRef = ref(db, 'players');
@@ -17,6 +18,17 @@ const CreateTeam = (sportId, setCreateTeam) => {
           setPlayers(response.val());
       })
   }, [])
+
+  const courtsRef = ref(db, 'courts');
+  useEffect(() => {
+      get(courtsRef).then((response) => {
+          setCourts(response.val());
+      })
+      onValue(courtsRef, (response) => {
+          setCourts(response.val());
+      })
+  }, [])
+
 
   const sportsRef = ref(db, 'sports');
   useEffect(() => {
@@ -59,11 +71,20 @@ const CreateTeam = (sportId, setCreateTeam) => {
         const team = teams[teamId]
         if (team.players.includes(60)) {
           setTeamSaved(true)
+          for (const sportId in sports) {
+            const currSport = sports[sportId]
+            const currSportName = currSport.type
+            for (const courtId in currSport.courts) {
+              const currCourt = courts[currSport.courts[courtId] - 1]
+              if (currCourt.waitlist.includes(team.id)) {
+                setSportCategory(currSportName)
+              }
+            }
+          }
           const teamRef = ref(db, 'teams/' + (team.id - 1))
           get(teamRef).then((response) => {
             setTeamInfo(response.val())
-            // console.log(response.val().players)
-            // setCurrentPlayers(response.val().players)
+            setCurrentPlayers(response.val().players)
           })
         }
       }
@@ -119,7 +140,21 @@ const CreateTeam = (sportId, setCreateTeam) => {
     }
   }
 
-
+  const leaveTeam = () => {
+    const teamPlayersRef = ref(db, 'teams/' + (teamInfo.id - 1) + '/' + "players")
+    get(teamPlayersRef).then((response) => {
+        const teamPlayers = response.val();
+        const newTeam = []
+        teamPlayers.forEach((player) => {
+          if (player !== 60) {
+            newTeam.push(player)
+          }
+        })
+        set(teamPlayersRef, newTeam);
+        setTeamInfo({name: '', sport: '', avgSkillLevel: 0})
+        setTeamSaved(false)
+    })
+  }
 
   return (
     <div>
@@ -172,6 +207,7 @@ const CreateTeam = (sportId, setCreateTeam) => {
                 }
               })}
             </div>
+            <button className="p-2 bg-slate-300 text-slate-800 rounded border border-slate-800 my-4" onClick={() => leaveTeam()}>Leave Team</button>
           </>
           }
         </div>
