@@ -46,6 +46,7 @@ const CreateTeam = (sportId, setCreateTeam) => {
   const [sportMax, setSportMax] = useState()
   const [teamInfo, setTeamInfo] = useState({name: '', avgSkillLevel: 0})
   const [teamSport, setTeamSport] = useState("")
+  const [currentCourt, setCurrentCourt] = useState()
 
 
   const teamsRef = ref(db, 'teams');
@@ -66,11 +67,13 @@ const CreateTeam = (sportId, setCreateTeam) => {
           setTeamSaved(true)
           for (const sportId in sports) {
             const currSport = sports[sportId]
-            const currSportName = currSport.type
+            const currSportType = currSport.type
+            const currSportName = currSport.name
             for (const courtId in currSport.courts) {
               const currCourt = courts[currSport.courts[courtId] - 1]
               if (currCourt.waitlist.includes(team.id)) {
-                setSportCategory(currSportName)
+                setSportCategory(currSportType)
+                setTeamSport(currSportName)
               }
             }
           }
@@ -116,37 +119,45 @@ const CreateTeam = (sportId, setCreateTeam) => {
     if (teamInfo.players?.length > 0) {
       const thisTeamRef = ref(db, 'teams/' + (teamInfo.id - 1))
       set(thisTeamRef, teamInfo);
-    }
-    let onCourt = false;
-    for (const sportId in sports) {
-      const currSport = sports[sportId]
-      for (const courtId in currSport.courts) {
-        const currCourt = courts[currSport.courts[courtId] - 1]
-        if (currCourt.waitlist.includes(teamInfo.id)) {
-          onCourt = true;
-        }
-      }
-    }
-    if (!onCourt) {
+      let onCourt = false;
       for (const sportId in sports) {
         const currSport = sports[sportId]
-        if (currSport.name == teamSport) {
-          let minWaitlist = 1000000
-          let minIndex = -1
-          for (const courtId in currSport.courts) {
-            const currCourt = courts[currSport.courts[courtId] - 1]
-            if (currCourt.waitlist.length < minWaitlist) {
-              minWaitlist = currCourt.waitlist.length
-              minIndex = currCourt.id - 1
-            } 
+        for (const courtId in currSport.courts) {
+          const currCourt = courts[currSport.courts[courtId] - 1]
+          if (currCourt.waitlist.includes(teamInfo.id)) {
+            onCourt = true;
+            setCurrentCourt(currCourt.id)
           }
-          courts[minIndex].waitlist.push(teamInfo.id)
-          set(courtsRef, courts)
+        }
+      }
+      if (!onCourt) {
+        for (const sportId in sports) {
+          const currSport = sports[sportId]
+          if (currSport.name == teamSport) {
+            let minWaitlist = 1000000
+            let minIndex = -1
+            for (const courtId in currSport.courts) {
+              const currCourt = courts[currSport.courts[courtId] - 1]
+              if (currCourt.waitlist.length < minWaitlist) {
+                minWaitlist = currCourt.waitlist.length
+                minIndex = currCourt.id - 1
+              } 
+            }
+            const newCourts = {...courts}
+            newCourts[minIndex].waitlist.push(teamInfo.id)
+            setCourts(newCourts)
+            setCurrentCourt(minIndex + 1)
+          }
         }
       }
     }
-    //show user what court they are on
   }, [teamInfo])
+
+  useEffect(() => {
+    if (courts) {
+      set(courtsRef, courts)
+    }
+  }, [courts])
 
   const addPlayer = (playerUsername) => {
     if (playerUsername === '') return
@@ -192,8 +203,9 @@ const CreateTeam = (sportId, setCreateTeam) => {
                 get(deleteCourtRef).then((response) => {
                   const newWaitlist = response.val()
                   newWaitlist.pop()
-                  courts[currCourt.id - 1].waitlist = newWaitlist
-                  set(deleteCourtRef, newWaitlist)
+                  const newCourts = {...courts}
+                  newCourts[currCourt.id - 1].waitlist = newWaitlist
+                  setCourts(newCourts)
                 })
               }
             }
@@ -205,7 +217,8 @@ const CreateTeam = (sportId, setCreateTeam) => {
         setSportMax()
         setTeamSaved(false)
         setCurrentPlayers([])
-        setTeamInfo({name: '', avgSkillLevel: 0})
+        setTeamInfo({name: '', avgSkillLevel: 0, id: null})
+        setCurrentCourt()
     })
   }
 
@@ -214,6 +227,7 @@ const CreateTeam = (sportId, setCreateTeam) => {
       <header className="flex flex-col justify-center items-center h-32 sticky top-0 w-full bg-white">
         <div className="text-4xl font-bold">{teamSaved ? teamInfo.name : "Create Your Team"}</div>
         {teamSaved && <div className="text-lg italic">{teamSport}</div>}
+        {teamSaved && <div className="text-lg italic">{"Court: " + currentCourt}</div>}
       </header>
       <div className="mb-32">
         <div className='mx-4 flex flex-col justify-center items-center text-xl'>
