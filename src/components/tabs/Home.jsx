@@ -48,11 +48,11 @@ const Home = ({ onSelectSport }) => {
 			</header>
       <div className='mx-4 flex flex-col items-center mb-32'>
         {sports && courts && sports.map((sport, index) => (
-          <div key={index} className='w-full lg:w-2/4 p-4 flex flex-col justify-between rounded mb-4 bg-custom-red hover:bg-red-600' onClick={() => onSelectSport(sport)}>
+          <div key={index} className='w-full lg:w-2/4 p-4 flex flex-col justify-between rounded mb-4 bg-custom-red bg-opacity-85 hover:bg-opacity-100' onClick={() => onSelectSport(sport)}>
             <div className="text-2xl text-white font-semibold tracking-wide mb-2">{sport.name}</div>
             <div className="flex flex-row justify-between text-lg italic">
-              <div className="text-md">Courts: {sport.courts.length}</div>
-              {sport?.courts && <div className="text-md">Teams Waiting: {countTeams(sport?.courts)}</div>}
+              <div>Courts: {sport.courts.length}</div>
+              {sport?.courts && <div>Teams Waiting: {countTeams(sport?.courts)}</div>}
             </div>
           </div>
         ))}

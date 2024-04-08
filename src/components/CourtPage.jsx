@@ -38,7 +38,7 @@ const CourtPage = ({ court, onBack, sport, createTeam }) => {
                 </header>
                 <div className='mx-4 flex flex-col items-center'>
                     {teams && courtTeams?.map((team, index) => (
-                    <div key={index} className='w-full lg:w-2/4 p-4 rounded mb-4 bg-custom-yellow hover:bg-yellow-600' onClick={() => setSelectedTeam(team)}>
+                    <div key={index} className='w-full lg:w-2/4 p-4 rounded mb-4 bg-custom-yellow bg-opacity-85 hover:bg-opacity-100' onClick={() => setSelectedTeam(team)}>
                         <div className="text-2xl font-semibold tracking-wide">{team.name}</div>
                         <div className="flex flex-row justify-between text-lg italic">
                             <div className="text-md">Average Skill: {team.avgSkillLevel}</div>
@@ -46,8 +46,8 @@ const CourtPage = ({ court, onBack, sport, createTeam }) => {
                         </div>
                     </div>
                     ))}
-                    <div className='w-full lg:w-2/4 p-2 rounded border-custom-yellow border-4 mb-4 hover:text-white hover:bg-slate-800' onClick={createTeam}>
-                        <div className="text-xl ">Create Your Own Team</div>
+                    <div className='w-full lg:w-2/4 p-2 rounded border-custom-yellow border-4 mb-4 hover:text-white text-center font-semibold hover:bg-custom-yellow' onClick={createTeam}>
+                        <div className="text-xl">Create Your Own Team</div>
                     </div>
                 </div>
                 </>

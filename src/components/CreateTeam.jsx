@@ -167,28 +167,36 @@ const CreateTeam = (sportId, setCreateTeam) => {
 
   return (
     <div>
-      <header className="flex flex-col justify-center items-center h-32">
+      <header className="flex flex-col justify-center items-center h-32 sticky top-0 w-full bg-white">
         <div className="text-4xl font-bold">{teamSaved ? teamInfo.name : "Create Your Team"}</div>
-        {teamSaved && <div className="text-md italic">{teamInfo.sport}</div>}
+        {teamSaved && <div className="text-lg italic">{teamInfo.sport}</div>}
       </header>
-      <div>
+      <div className="mb-32">
         <div className='mx-4 flex flex-col justify-center items-center text-xl'>
           {!teamSaved &&
             <form>
-              <div className='flex flex-row p-2'>
-                <label for="teamName" className='font-semibold mr-2'>Team Name:</label><br />
-                <input type="text" id="teamName" name="teamName" placeholder='Vikings' required /><br />
+              <div className='grid grid-cols-2 p-2 w-full'>
+                <div>
+                  <label for="teamName" className='font-semibold mr-2 w-full'>Team Name:</label><br />
+                </div>
+                <div>
+                  <input type="text" className="w-full" id="teamName" name="teamName" placeholder='Vikings' required /><br />
+                </div>
               </div>
-              <div className='flex flex-row p-2'>
-                <label for="sportSelection" className='font-semibold mr-2'>Select sport:</label><br />
-                <select id="sportSelection" name="sportSelection" required>
-                  {sports && sports.map((sport, index) => (
-                    <option key={index} value={sport.id}>{sport.name}</option>
-                  ))}
-                </select>
+              <div className='grid grid-cols-2 p-2 w-full'>
+                <div>
+                  <label for="sportSelection" className='font-semibold mr-2'>Select sport:</label><br />
+                </div>
+                <div>
+                  <select id="sportSelection" name="sportSelection" required>
+                    {sports && sports.map((sport, index) => (
+                      <option key={index} value={sport.id}>{sport.name}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
               <div className='flex justify-center items-center my-4'>
-                <input type='submit' className="p-2 bg-slate-300 text-slate-800 rounded border border-slate-800" onClick={(e) => createTeam(e)} value="Save Team"/>
+                <input type='submit' className="py-2 px-4 bg-custom-gray text-white font-semibold tracking-wide rounded" onClick={(e) => createTeam(e)} value="Save Team"/>
               </div>
             </form>
           }
@@ -198,25 +206,24 @@ const CreateTeam = (sportId, setCreateTeam) => {
               <label for="playerUsername" className='font-semibold mr-2'>Add players:</label><br />
               <input className="p-2 border border-slate-500 rounded" type="text" id="playerUsername" name="playerUsername" placeholder='username' required /><br />
             </div>
-            <button className="p-2 bg-slate-300 text-slate-800 rounded border border-slate-800 my-4" onClick={() => addPlayer(document.getElementById('playerUsername').value)}>Add Player</button>
+            <button className="py-2 px-4 bg-custom-green text-white font-semibold tracking-wide rounded my-4" onClick={() => addPlayer(document.getElementById('playerUsername').value)}>Add Player</button>
             <div className='w-full flex flex-col'>
               <div className='text-xl my-4 underline text-center'>Players on the team</div>
-              {players && currentPlayers.map((playerId, index) => {
+              { players && currentPlayers.map((playerId, index) => {
                 const player = players.find(p => p.id === playerId)
                 if (player) {
                   return (
-                    <div key={index} className='w-full lg:w-2/4 p-2 rounded border-slate-900 border mb-4 hover:text-white hover:bg-slate-800'>
-                      <div className="text-xl">{player.name}</div>
-                      <div className="flex flex-row justify-between">
-                      <div className="text-sm">Skill: {player.sportsInfo[sportCategory].skillLevel}</div>
-                      <div className="text-sm">Phone Number: {player.phone}</div>
-                    </div>
-                </div>
-                  )
-                }
+                    <div key={index} className='w-full lg:w-2/4 p-4 flex flex-col justify-between rounded mb-4 bg-custom-gray'>
+                      <div className="text-2xl text-white font-semibold tracking-wide mb-2">{player.name}</div>
+                      <div className="flex flex-row justify-between text-lg italic">
+                        <div className="">Skill: {player.sportsInfo[sportCategory].skillLevel}</div>
+                        <div className="">Phone: {player.phone}</div>
+                      </div>
+                  </div>
+                )}
               })}
             </div>
-            <button className="p-2 bg-slate-300 text-slate-800 rounded border border-slate-800 my-4" onClick={() => leaveTeam()}>Leave Team</button>
+            <button className="py-2 px-4 bg-custom-red text-white font-semibold tracking-wide rounded my-4" onClick={() => leaveTeam()}>Leave Team</button>
           </>
           }
         </div>

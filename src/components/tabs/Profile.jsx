@@ -35,7 +35,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="w-full m-8">
+    <div className="w-full m-8 lg:max-w-screen-sm">
       <div className="float-right">
         <button style={{ fontSize: '24px', cursor: 'pointer', border: 'none', background: 'none' }}>
           <FaCog />

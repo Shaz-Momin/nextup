@@ -7,19 +7,19 @@ function Navbar({ currTab, setTab }) {
     // Styles
     const selected = {
         button: "inline-flex flex-col items-center justify-center px-5 bg-gray-50 dark:bg-gray-800 group",
-        svg: "w-5 h-5 mb-2 text-blue-600 dark:text-blue-500",
+        svg: "w-5 h-5 mb-1.5 text-blue-600 dark:text-blue-500",
         span: "text-sm capitalize text-gray-500 text-blue-600 dark:text-blue-500"
     }
 
     const unselected = {
         button: "inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group",
-        svg: "w-5 h-5 mb-2 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500",
+        svg: "w-5 h-5 mb-1.5 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500",
         span: "text-sm capitalize text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500"
     }
 
     return (
         <div>
-            <div class="fixed bottom-0 left-0 z-50 w-full h-20 bg-white border-t border-gray-200 dark:bg-gray-700 dark:border-gray-600">
+            <div class="fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200 dark:bg-gray-700 dark:border-gray-600">
                 <div class="grid h-full max-w-lg grid-cols-3 mx-auto font-medium">
                     <button type="button" onClick={() => setTab(0)} class={currTab === 0 ? selected.button : unselected.button}>
                         <svg class={currTab === 0 ? selected.svg : unselected.svg} aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
