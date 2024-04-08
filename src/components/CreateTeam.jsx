@@ -49,10 +49,11 @@ const CreateTeam = (sportId, setCreateTeam) => {
     }
   }, [sports])
 
-  let [teamSaved, setTeamSaved] = useState(false)
-  let [currentPlayers, setCurrentPlayers] = useState([])
-  let [sportCategory, setSportCategory] = useState("")
-  let [teamInfo, setTeamInfo] = useState({name: '', sport: '', avgSkillLevel: 0})
+  const [teamSaved, setTeamSaved] = useState(false)
+  const [currentPlayers, setCurrentPlayers] = useState([])
+  const [sportCategory, setSportCategory] = useState("")
+  const [sportMax, setSportMax] = useState()
+  const [teamInfo, setTeamInfo] = useState({name: '', sport: '', avgSkillLevel: 0})
 
 
   const teamsRef = ref(db, 'teams');
@@ -118,12 +119,17 @@ const CreateTeam = (sportId, setCreateTeam) => {
 
     setTeamInfo({name: teamName, sport: sports[sport - 1].name, avgSkillLevel: 3})
     setSportCategory(sports[sport - 1].type)
+    setSportMax(sports[sport - 1].maxPlayers)
     setCurrentPlayers([1])
 
   }
 
   const addPlayer = (playerUsername) => {
     if (playerUsername === '') return
+    if (sportMax - currentPlayers.length <= 0) {
+      alert('Team is already full')
+      return
+    }
     let player;
     if (players) {
       player = players.find(p => p.name === playerUsername)
@@ -152,6 +158,9 @@ const CreateTeam = (sportId, setCreateTeam) => {
         })
         set(teamPlayersRef, newTeam);
         setTeamInfo({name: '', sport: '', avgSkillLevel: 0})
+        setCurrentPlayers([])
+        setSportCategory()
+        setSportMax()
         setTeamSaved(false)
     })
   }
