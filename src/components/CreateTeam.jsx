@@ -339,10 +339,12 @@ const CreateTeam = ({sportId, setCreateTeam}) => {
                 const player = players.find(p => p.id === playerId)
                 if (player) {
                   return (
-                    <div key={index} className='w-full lg:w-2/4 p-4 flex flex-col justify-between rounded mb-4 bg-custom-gray'>
-                      <img src={player.profilePhoto} alt={player.name} className="player-picture w-24 h-24 mr-4 rounded-l" />
-                      <div className="text-2xl text-white font-semibold tracking-wide mb-2">{player.name}</div>
-                      <div className="flex flex-row justify-between text-lg italic">
+                    <div key={index} className='w-full lg:w-2/4 p-4 grid grid-cols-3 justify-between rounded mb-4 bg-custom-gray'>
+                      <div>
+                        <img src={player.profilePhoto} alt={player.name} className="player-picture w-24 h-24 mr-4 rounded-lg" />
+                      </div>
+                      <div className="flex flex-col col-span-2 justify-between text-lg italic">
+                        <div className="text-2xl text-white font-semibold tracking-wide mb-2">{player.name}</div>
                         <div className="">Skill: {player.sportsInfo[sportCategory]?.skillLevel}</div>
                         <div className="">Phone: {player.phone}</div>
                       </div>
@@ -358,13 +360,15 @@ const CreateTeam = ({sportId, setCreateTeam}) => {
                   const fa = players.find(p => p.id === agent.id)
                   if (fa) {
                     return (
-                      <div key={agent.id} className='w-full lg:w-2/4 p-4 flex flex-col justify-between rounded mb-4 bg-custom-yellow'>
-                        <img src={fa.profilePhoto} alt={fa.name} className="player-picture w-24 h-24 mr-4 rounded-l" />
-                        <div className="text-2xl text-white font-semibold tracking-wide mb-2">{fa.name}</div>
-                        <div className="flex flex-row justify-between text-lg italic">
-                          <div className="">Skill: {fa.sportsInfo[sportCategory]?.skillLevel}</div>
+                      <div key={agent.id} className='w-full lg:w-2/4 p-4 grid grid-cols-3 justify-between rounded mb-4 bg-custom-yellow'>
+                        <div>
+                          <img src={fa.profilePhoto} alt={fa.name} className="player-picture w-24 h-24 mr-4 rounded-lg" />
+                        </div>
+                        <div className="flex flex-col col-span-2 justify-between text-lg italic">
+                          <div className="text-2xl text-white font-semibold tracking-wide mb-2">{fa.name}</div>
+                          <div>Skill: {fa.sportsInfo[sportCategory]?.skillLevel}</div>
                           <div className="">Phone: {fa.phone}</div>
-                          <button onClick={() => addPlayerToTeam(fa.id)} className="py-1 px-3 bg-custom-blue text-white font-semibold rounded">
+                          <button onClick={() => addPlayerToTeam(fa.id)} className="mt-2 py-1 px-3 w-32 bg-custom-blue bg-white text-slate font-semibold rounded">
                             Add
                           </button>
                         </div>
