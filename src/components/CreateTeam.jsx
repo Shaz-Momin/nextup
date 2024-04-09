@@ -1,13 +1,28 @@
 import React, { useState, useEffect } from 'react'
 import { getDatabase, get, ref, onValue, set, push } from 'firebase/database'
 
-const CreateTeam = (sportId, setCreateTeam) => {
+const CreateTeam = ({sportId, setCreateTeam}) => {
 
   const [sports, setSports] = useState()
   const [players, setPlayers] = useState()
   const [teams, setTeams] = useState()
   const [courts, setCourts] = useState()
   const db = getDatabase()
+  const [allSports, setAllSports] = useState([]);
+
+  useEffect(() => {
+    const fetchSports = async () => {
+      const sportsRef = ref(db, 'sports');
+      const snapshot = await get(sportsRef);
+      if (snapshot.exists()) {
+        const sportsData = snapshot.val();
+        // Convert object to array if needed or directly set it
+        setAllSports(Object.values(sportsData)); // Assuming sportsData is an object
+      }
+    };
+
+    fetchSports();
+  }, []); // Empty dependency array means this runs once on component mount
 
   const playersRef = ref(db, 'players');
   useEffect(() => {
@@ -47,6 +62,8 @@ const CreateTeam = (sportId, setCreateTeam) => {
   const [teamInfo, setTeamInfo] = useState({name: '', avgSkillLevel: 0})
   const [teamSport, setTeamSport] = useState("")
   const [currentCourt, setCurrentCourt] = useState()
+  const [freeAgents, setFreeAgents] = useState([]);
+  const [selectedSport, setSelectedSport] = useState(null);
 
 
   const teamsRef = ref(db, 'teams');
@@ -222,6 +239,34 @@ const CreateTeam = (sportId, setCreateTeam) => {
     })
   }
 
+  const findSportIdByName = (sports, teamSportName) => {
+    const sport = sports.find(sport => sport.name === teamSportName);
+    return sport ? sport.id : null;
+  };
+
+  useEffect(() => {
+    const fetchFreeAgents = async () => {
+      if (!teamSport) return;
+
+      const sId = findSportIdByName(allSports, teamSport);
+      const sportRef = ref(db, `sports/${sId-1}`);
+      const snapshot = await get(sportRef);
+      if (snapshot.exists()) {
+        const sportData = snapshot.val();
+        const freeAgentIds = sportData.freeAgents || [];
+
+        const agentsDetails = await Promise.all(freeAgentIds.map(async (id) => {
+          const playerSnapshot = await get(ref(db, `players/${id}`));
+          return playerSnapshot.exists() ? playerSnapshot.val() : null;
+        }));
+
+        setFreeAgents(agentsDetails.filter(Boolean));
+      }
+    };
+
+    fetchFreeAgents();
+  }, [teamSport, db]);
+
   return (
     <div>
       <header className="flex flex-col justify-center items-center h-32 sticky top-0 w-full bg-white">
@@ -282,6 +327,23 @@ const CreateTeam = (sportId, setCreateTeam) => {
               })}
             </div>
             <button className="py-2 px-4 bg-custom-red text-white font-semibold tracking-wide rounded my-4" onClick={() => leaveTeam()}>Leave Team</button>
+            <div className='w-full flex flex-col'>
+              <div className='text-xl my-4 underline text-center'>Available Free Agents</div>
+              {freeAgents.map((agent) => {
+                  const fa = players.find(p => p.id === agent.id)
+                  if (fa) {
+                    return (
+                      <div key={agent.id} className='w-full lg:w-2/4 p-4 flex flex-col justify-between rounded mb-4 bg-custom-yellow'>
+                        <div className="text-2xl text-white font-semibold tracking-wide mb-2">{fa.name}</div>
+                        <div className="flex flex-row justify-between text-lg italic">
+                          <div className="">Skill: {fa.sportsInfo[sportCategory]?.skillLevel}</div>
+                          <div className="">Phone: {fa.phone}</div>
+                        </div>
+                      </div>
+                    )
+                  }
+              })}
+            </div>
           </>
           }
         </div>
