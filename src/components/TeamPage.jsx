@@ -68,6 +68,7 @@ const TeamPage = ({ team, onBack, sport, createTeam }) => {
             <div className='mx-4 flex flex-col items-center'>
                 {players && teamPlayers?.map((player, index) => (
                 <div key={index} className='w-full lg:w-2/4 p-4 rounded mb-4 bg-custom-yellow hover:bg-yellow-600'>
+                    <img src={player.profilePhoto} alt={player.name} className="player-picture w-24 h-24 mr-4 rounded-l" />
                     <div className="text-2xl font-semibold mb-1 tracking-wide">{player.name}</div>
                     <div className="flex flex-row justify-between italic text-lg">
                         <div className="">Skill: {player.sportsInfo[sport.type].skillLevel}</div>

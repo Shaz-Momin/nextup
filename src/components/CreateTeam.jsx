@@ -99,6 +99,7 @@ const CreateTeam = ({sportId, setCreateTeam}) => {
             setTeamInfo(response.val())
             setCurrentPlayers(response.val().players)
           })
+          break
         }
       }
     }
@@ -244,6 +245,27 @@ const CreateTeam = ({sportId, setCreateTeam}) => {
     return sport ? sport.id : null;
   };
 
+  const addPlayerToTeam = async (playerId) => {
+    // Update the team's player list in the state
+    setCurrentPlayers(currentPlayers => [...currentPlayers, playerId]);
+  
+    // Remove the player from the free agents list in the state
+    setFreeAgents(freeAgents => freeAgents.filter(agent => agent.id !== playerId));
+  
+    // Update the team's player list in Firebase
+    const teamPlayersRef = ref(db, `teams/${teamInfo.id-1}/players`);
+    await set(teamPlayersRef, [...currentPlayers, playerId]); // Make sure this logic matches your data structure
+  
+    // Find the sportId from the teamSport name to update the free agent list in Firebase
+    const sportId = findSportIdByName(allSports, teamSport);
+    if (sportId) {
+      const freeAgentRef = ref(db, `sports/${sportId-1}/freeAgents`);
+      // Assuming you have the current list of free agent IDs in a state or can fetch it
+      const updatedFreeAgents = freeAgents.filter(agent => agent.id !== playerId).map(agent => agent.id);
+      await set(freeAgentRef, updatedFreeAgents);
+    }
+  };
+
   useEffect(() => {
     const fetchFreeAgents = async () => {
       if (!teamSport) return;
@@ -317,6 +339,7 @@ const CreateTeam = ({sportId, setCreateTeam}) => {
                 if (player) {
                   return (
                     <div key={index} className='w-full lg:w-2/4 p-4 flex flex-col justify-between rounded mb-4 bg-custom-gray'>
+                      <img src={player.profilePhoto} alt={player.name} className="player-picture w-24 h-24 mr-4 rounded-l" />
                       <div className="text-2xl text-white font-semibold tracking-wide mb-2">{player.name}</div>
                       <div className="flex flex-row justify-between text-lg italic">
                         <div className="">Skill: {player.sportsInfo[sportCategory]?.skillLevel}</div>
@@ -329,15 +352,20 @@ const CreateTeam = ({sportId, setCreateTeam}) => {
             <button className="py-2 px-4 bg-custom-red text-white font-semibold tracking-wide rounded my-4" onClick={() => leaveTeam()}>Leave Team</button>
             <div className='w-full flex flex-col'>
               <div className='text-xl my-4 underline text-center'>Available Free Agents</div>
+              <button className="py-2 px-4 bg-custom-green text-white font-semibold tracking-wide rounded my-4">Auto-Add Free Agents</button>
               {freeAgents.map((agent) => {
                   const fa = players.find(p => p.id === agent.id)
                   if (fa) {
                     return (
                       <div key={agent.id} className='w-full lg:w-2/4 p-4 flex flex-col justify-between rounded mb-4 bg-custom-yellow'>
+                        <img src={fa.profilePhoto} alt={fa.name} className="player-picture w-24 h-24 mr-4 rounded-l" />
                         <div className="text-2xl text-white font-semibold tracking-wide mb-2">{fa.name}</div>
                         <div className="flex flex-row justify-between text-lg italic">
                           <div className="">Skill: {fa.sportsInfo[sportCategory]?.skillLevel}</div>
                           <div className="">Phone: {fa.phone}</div>
+                          <button onClick={() => addPlayerToTeam(fa.id)} className="py-1 px-3 bg-custom-blue text-white font-semibold rounded">
+                            Add
+                          </button>
                         </div>
                       </div>
                     )
