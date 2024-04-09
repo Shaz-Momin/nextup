@@ -333,7 +333,7 @@ const CreateTeam = ({sportId, setCreateTeam}) => {
               <input className="p-2 border border-slate-500 rounded" type="text" id="playerUsername" name="playerUsername" placeholder='username' required /><br />
             </div>
             <button className="py-2 px-4 bg-custom-green text-white font-semibold tracking-wide rounded my-4" onClick={() => addPlayer(document.getElementById('playerUsername').value)}>Add Player</button>
-            <div className='w-full flex flex-col'>
+            <div className='w-full flex flex-col items-center'>
               <div className='text-xl my-4 underline text-center'>Players on the team</div>
               { players && currentPlayers.map((playerId, index) => {
                 const player = players.find(p => p.id === playerId)
