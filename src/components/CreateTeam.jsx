@@ -95,6 +95,7 @@ const CreateTeam = ({sportId, setCreateTeam}) => {
             }
           }
           const teamRef = ref(db, 'teams/' + (team.id - 1))
+          console.log(team.id)
           get(teamRef).then((response) => {
             setTeamInfo(response.val())
             setCurrentPlayers(response.val().players)
