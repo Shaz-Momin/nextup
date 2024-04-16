@@ -267,6 +267,31 @@ const CreateTeam = ({sportId, setCreateTeam}) => {
     }
   };
 
+  const autoAdd = async () => {
+    const sportId = findSportIdByName(allSports, teamSport);
+    const sportRef = ref(db, `sports/${sportId-1}`);
+    const snapshot = await get(sportRef);
+
+    let freeAgentIds = [];
+    if (snapshot.exists()) {
+      const sportData = snapshot.val();
+      freeAgentIds = sportData.freeAgents || [];
+    }
+    for (let i = 0; i < freeAgentIds.length; i++) {
+      freeAgentIds[i] += 1;
+    }
+    const x = sportMax - currentPlayers.length;
+    const xFreeAgents = freeAgentIds.slice(0, x);
+    setCurrentPlayers(currentPlayers => [...currentPlayers, ...xFreeAgents]);
+    const updatedFreeAgents = freeAgentIds.slice(x);
+    await set(ref(db, `sports/${sportId-1}/freeAgents`), updatedFreeAgents);
+
+    // remove added free agents from list of free agents on screen
+    setFreeAgents(freeAgents => freeAgents.filter(agent => !xFreeAgents.includes(agent.id)));
+
+
+  }
+
   useEffect(() => {
     const fetchFreeAgents = async () => {
       if (!teamSport) return;
@@ -355,7 +380,7 @@ const CreateTeam = ({sportId, setCreateTeam}) => {
             <button className="py-2 px-4 bg-custom-red text-white font-semibold tracking-wide rounded my-4" onClick={() => leaveTeam()}>Leave Team</button>
             <div className='w-full flex flex-col'>
               <div className='text-xl my-4 underline text-center'>Available Free Agents</div>
-              <button className="py-2 px-4 bg-custom-green text-white font-semibold tracking-wide rounded my-4">Auto-Add Free Agents</button>
+              <button className="py-2 px-4 bg-custom-green text-white font-semibold tracking-wide rounded my-4" onClick={() => autoAdd()}>Auto-Add Free Agents</button>
               {freeAgents.map((agent) => {
                   const fa = players.find(p => p.id === agent.id)
                   if (fa) {

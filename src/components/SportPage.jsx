@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { get, getDatabase,ref, onValue } from "firebase/database";
+import { get, getDatabase,ref, onValue, set } from "firebase/database";
 import CourtPage from './CourtPage'
 
 const SportPage = ({ sport, onBack, createTeam }) => {
@@ -29,6 +29,27 @@ const SportPage = ({ sport, onBack, createTeam }) => {
         })
     }, [])
 
+
+    const [freeAgentList, setFreeAgentList] = useState([])
+    const sportsRef = ref(db, 'sports/' + (sport.id - 1) + '/freeAgents');
+    
+    const joinAsFreeAgent = () => {
+        // add user to the freeAgents list in the sport
+        get(sportsRef).then((response) => {
+            const tempArray = response.val()
+            tempArray.push(60)
+            setFreeAgentList(tempArray)
+            alert("You have been added to the free agent list! Teams may add you to their team now, you'll see if you are part of a team on the team page!")
+        })
+    }
+
+    useEffect(() => {
+        if (freeAgentList?.length > 0) {
+            set(sportsRef, freeAgentList)
+        }
+    }, [freeAgentList])
+
+
     useEffect(() => {
         if (courts) {
             setSportCourts(sport?.courts.map(courtId => courts.find(court => court.id === courtId)));
@@ -55,23 +76,29 @@ const SportPage = ({ sport, onBack, createTeam }) => {
     return (
         <div className='w-full'>
             {selectedCourt === null ? (
-                <>
-            <header className="flex justify-center items-center h-32">
-                <button className="absolute text-md text-blue-500 top-4 left-4 font-semibold" onClick={onBack}>&larr; Back to Sports List</button>
-                <div className="text-4xl font-bold">{sport.name} Courts</div>
-            </header>
-            <div className='mx-4 flex flex-col items-center'>
-                {courts && teams && sportCourts && sportCourts?.map((court, index) => (
-                <div key={index} className='w-full lg:w-2/4 p-4 rounded mb-4 bg-custom-yellow bg-opacity-85 hover:bg-opacity-100' onClick={() => setSelectedCourt(court)}>
-                    <div className="text-2xl font-semibold tracking-wide">Court {court.id}</div>
-                    <div className="flex flex-row justify-between text-lg italic">
-                        <div className="">Average Skill: {calculateAverageSkill(court.id)}</div>
-                        {sport?.courts && <div className="text-md">Teams Waiting: {court.waitlist.length}</div>}
+            <>
+                <header className="flex justify-center items-center h-32">
+                    <button className="absolute text-md text-blue-500 top-4 left-4 font-semibold" onClick={onBack}>&larr; Back to Sports List</button>
+                    <div className="text-4xl font-bold">{sport.name} Courts</div>
+                </header>
+                <div className='mx-4 flex flex-col items-center'>
+                    {courts && teams && sportCourts && sportCourts?.map((court, index) => (
+                    <div key={index} className='w-full lg:w-2/4 p-4 rounded mb-4 bg-custom-yellow bg-opacity-85 hover:bg-opacity-100' onClick={() => setSelectedCourt(court)}>
+                        <div className="text-2xl font-semibold tracking-wide">Court {court.id}</div>
+                        <div className="flex flex-row justify-between text-lg italic">
+                            <div className="">Average Skill: {calculateAverageSkill(court.id)}</div>
+                            {sport?.courts && <div className="text-md">Teams Waiting: {court.waitlist.length}</div>}
+                        </div>
+                    </div>
+                    ))}
+                </div>
+                <div className='p-4'>
+                    <div className='w-full lg:w-2/4 p-2 mb-4 rounded border-custom-yellow border-4 hover:text-white text-center font-semibold hover:bg-custom-yellow' onClick={() => joinAsFreeAgent()}>
+                        <div className="text-xl">Join as a Free Agent</div>
                     </div>
                 </div>
-                ))}
-            </div>
-            </>
+                
+                </>
             ) : 
             (
                 <>
