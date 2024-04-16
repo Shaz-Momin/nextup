@@ -380,7 +380,7 @@ const CreateTeam = ({sportId, setCreateTeam}) => {
             <button className="py-2 px-4 bg-custom-red text-white font-semibold tracking-wide rounded my-4" onClick={() => leaveTeam()}>Leave Team</button>
             <div className='w-full flex flex-col'>
               <div className='text-xl my-4 underline text-center'>Available Free Agents</div>
-              <button className="py-2 px-4 bg-custom-green text-white font-semibold tracking-wide rounded my-4" onClick={() => autoAdd()}>Auto-Add Free Agents</button>
+              {/* <button className="py-2 px-4 bg-custom-green text-white font-semibold tracking-wide rounded my-4" onClick={() => autoAdd()}>Auto-Add Free Agents</button> */}
               {freeAgents.map((agent) => {
                   const fa = players.find(p => p.id === agent.id)
                   if (fa) {

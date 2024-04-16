@@ -92,12 +92,11 @@ const SportPage = ({ sport, onBack, createTeam }) => {
                     </div>
                     ))}
                 </div>
-                <div className='p-4'>
+                <div className='p-4 mb-8'>
                     <div className='w-full lg:w-2/4 p-2 mb-4 rounded border-custom-yellow border-4 hover:text-white text-center font-semibold hover:bg-custom-yellow' onClick={() => joinAsFreeAgent()}>
                         <div className="text-xl">Join as a Free Agent</div>
                     </div>
                 </div>
-                
                 </>
             ) : 
             (
