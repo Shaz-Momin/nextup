@@ -393,9 +393,9 @@ const CreateTeam = ({sportId, setCreateTeam}) => {
                           <div className="text-2xl text-white font-semibold tracking-wide mb-2">{fa.name}</div>
                           <div>Skill: {fa.sportsInfo[sportCategory]?.skillLevel}</div>
                           <div className="">Phone: {fa.phone}</div>
-                          <button onClick={() => addPlayerToTeam(fa.id)} className="mt-2 py-1 px-3 w-32 bg-custom-blue bg-white text-slate font-semibold rounded">
+                          {/* <button onClick={() => addPlayerToTeam(fa.id)} className="mt-2 py-1 px-3 w-32 bg-custom-blue bg-white text-slate font-semibold rounded">
                             Add
-                          </button>
+                          </button> */}
                         </div>
                       </div>
                     )
